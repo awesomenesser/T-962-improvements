@@ -190,6 +190,10 @@ void Reflow_SetMode(ReflowMode_t themode) {
 	}
 }
 
+ReflowMode_t Reflow_GetMode() {
+	return mymode;
+}
+
 void Reflow_SetSetpoint(uint16_t thesetpoint) {
 	intsetpoint = thesetpoint;
 

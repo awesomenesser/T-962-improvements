@@ -329,8 +329,10 @@ static int32_t Main_Work(void) {
 
 		// buttons
 		y = 64 - 7;
-		LCD_disp_str((uint8_t*)" < ", 3, 0, y, FONT6X6 | INVERT);
-		LCD_disp_str((uint8_t*)" > ", 3, 20, y, FONT6X6 | INVERT);
+		//LCD_disp_str((uint8_t*)" < ", 3, 0, y, FONT6X6 | INVERT);
+		//LCD_disp_str((uint8_t*)" > ", 3, 20, y, FONT6X6 | INVERT);
+		LCD_disp_str((uint8_t*)" ^ ", 3, 0, y, FONT6X6 | INVERT);//Up arrow
+		LCD_disp_str((uint8_t*)" _ ", 3, 20, y, FONT6X6 | INVERT);//Down arrow '_' had been adjusted to be a down arrow
 		LCD_disp_str((uint8_t*)" - ", 3, 45, y, FONT6X6 | INVERT);
 		LCD_disp_str((uint8_t*)" + ", 3, 65, y, FONT6X6 | INVERT);
 		LCD_disp_str((uint8_t*)" DONE ", 6, 91, y, FONT6X6 | INVERT);
@@ -373,6 +375,7 @@ static int32_t Main_Work(void) {
 		LCD_disp_str((uint8_t*)"RUN", 3, 110, 33, FONT6X6);
 		LCD_disp_str((uint8_t*)buf, len, 110, 39, FONT6X6);
 
+		/*
 		// Abort reflow
 		if (Reflow_IsDone() || keyspressed & KEY_S) {
 			printf("\nReflow %s\n", (Reflow_IsDone() ? "done" : "interrupted by keypress"));
@@ -380,6 +383,22 @@ static int32_t Main_Work(void) {
 				Buzzer_Beep(BUZZ_1KHZ, 255, TICKS_MS(100) * NV_GetConfig(REFLOW_BEEP_DONE_LEN));
 			}
 			mode = MAIN_HOME;
+			Reflow_SetMode(REFLOW_STANDBY);//Just run the fan and try to get down to the temp setpoint (no heat) (this also stops drawing on the screen)
+			retval = 0; // Force immediate refresh
+		}
+		*/
+		
+		if (keyspressed & KEY_S) {
+			// Abort reflow
+			printf("\nReflow %s\n", "interrupted by keypress");
+			mode = MAIN_HOME;//Exit to the main menu
+			Reflow_SetMode(REFLOW_STANDBY);
+			retval = 0; // Force immediate refresh
+		} else if (Reflow_IsDone() && (Reflow_GetMode() == REFLOW_REFLOW)) {//TODO Might not need to get the mode since isdone will only trigger once
+			//Stop reflowing when done
+			printf("\nReflow %s\n", "done");
+			Buzzer_Beep(BUZZ_1KHZ, 255, TICKS_MS(100) * NV_GetConfig(REFLOW_BEEP_DONE_LEN));
+			//Just run the fan and try to get down to the temp setpoint (no heat) (this also stops drawing on the screen)
 			Reflow_SetMode(REFLOW_STANDBY);
 			retval = 0; // Force immediate refresh
 		}

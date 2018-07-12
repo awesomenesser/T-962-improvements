@@ -18,6 +18,7 @@ typedef enum eReflowMode {
 
 void Reflow_Init(void);
 void Reflow_SetMode(ReflowMode_t themode);
+ReflowMode_t Reflow_GetMode();
 void Reflow_SetSetpoint(uint16_t thesetpoint);
 void Reflow_LoadSetpoint(void);
 int16_t Reflow_GetActualTemp(void);
