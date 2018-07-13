@@ -9,6 +9,7 @@
 
 #include "reflow_profiles.h"
 
+#define FASTLOWTEST
 #define RAMPTEST
 #define PIDTEST
 
@@ -40,6 +41,20 @@ static const profile syntechlfprofile = {
 		184,177,157,137,117, 97, 77, 57,  0,  0,  0,  0,  0,  0,  0,  0  // 320-470s
 	}
 };
+
+#ifdef FASTLOWTEST
+// NC-31 low-temp lead-free profile
+static const profile ltfastprofile = {
+	"Fast LOW-TEMP Test", {
+		50, 50, 55, 85, 95, 102, 107, 112,
+		117, 122, 132, 148, 160, 148, 130, 114,
+		98, 82, 66, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0
+	}
+};
+#endif
 
 #ifdef RAMPTEST
 // Ramp speed test temp profile
@@ -73,6 +88,9 @@ static const profile* profiles[] = {
 	&syntechlfprofile,
 	&nc31profile,
 	&am4300profile,
+#ifdef FASTLOWTEST
+	&ltfastprofile,
+#endif
 #ifdef RAMPTEST
 	&rampspeed_testprofile,
 #endif

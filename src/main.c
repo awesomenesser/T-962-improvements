@@ -331,7 +331,7 @@ static int32_t Main_Work(void) {
 		y = 64 - 7;
 		//LCD_disp_str((uint8_t*)" < ", 3, 0, y, FONT6X6 | INVERT);
 		//LCD_disp_str((uint8_t*)" > ", 3, 20, y, FONT6X6 | INVERT);
-		LCD_disp_str((uint8_t*)" ^ ", 3, 0, y, FONT6X6 | INVERT);//Up arrow
+		LCD_disp_str((uint8_t*)" ^ ", 3, 0, y, FONT6X6 | INVERT);//Up arrow '^' had been adjusted to be a up arrow
 		LCD_disp_str((uint8_t*)" _ ", 3, 20, y, FONT6X6 | INVERT);//Down arrow '_' had been adjusted to be a down arrow
 		LCD_disp_str((uint8_t*)" - ", 3, 45, y, FONT6X6 | INVERT);
 		LCD_disp_str((uint8_t*)" + ", 3, 65, y, FONT6X6 | INVERT);
@@ -361,7 +361,10 @@ static int32_t Main_Work(void) {
 			retval = 0; // Force immediate refresh
 		}
 	} else if (mode == MAIN_REFLOW) {
-		uint32_t ticks = RTC_Read();
+		static uint32_t ticks;
+		if (Reflow_GetMode() == REFLOW_REFLOW) {
+			ticks = RTC_Read();//Stop the tick timer after the end
+		}
 
 		len = snprintf(buf, sizeof(buf), "%03u", Reflow_GetSetpoint());
 		LCD_disp_str((uint8_t*)"SET", 3, 110, 7, FONT6X6);
@@ -394,7 +397,7 @@ static int32_t Main_Work(void) {
 			mode = MAIN_HOME;//Exit to the main menu
 			Reflow_SetMode(REFLOW_STANDBY);
 			retval = 0; // Force immediate refresh
-		} else if (Reflow_IsDone() && (Reflow_GetMode() == REFLOW_REFLOW)) {//TODO Might not need to get the mode since isdone will only trigger once
+		} else if (Reflow_IsDone() && (Reflow_GetMode() == REFLOW_REFLOW)) {
 			//Stop reflowing when done
 			printf("\nReflow %s\n", "done");
 			Buzzer_Beep(BUZZ_1KHZ, 255, TICKS_MS(100) * NV_GetConfig(REFLOW_BEEP_DONE_LEN));
